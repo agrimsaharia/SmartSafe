@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         database = database.child("Arduino").child(arduinoID)
 
         // Get reference to the status TextView
-        statusTextView = findViewById(R.id.tv_status)
+        statusTextView = findViewById(R.id.tv_statusValue)
 
         // Listen for changes in the "status" child
         val statusListener = object : ValueEventListener {
@@ -68,6 +68,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
         database.child("status").addValueEventListener(statusListener)
+
+
     }
 
     private fun fetchPreference(key: String) : String? {
@@ -87,8 +89,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.history -> {
+                launchHistoryActivity()
+            }
             R.id.set_pin -> {
                 launchSetPINDialog()
+            }
+            R.id.unlock_locker -> {
+                launchUnlockPINDialog()
             }
             R.id.logout -> {
                 mAuth.signOut()
@@ -98,9 +106,34 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun unlockLockerFromApp(lockPIN: Int) {
+        // TODO : Yet to finalise the process of unlocking mechanism
+    }
+
+    private fun launchUnlockPINDialog() {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.ask_pin_dialog)
+
+        val inputEditText = dialog.findViewById<EditText>(R.id.et_lock_pin)
+        val cancelButton = dialog.findViewById<Button>(R.id.cancel)
+        val submitButton = dialog.findViewById<Button>(R.id.submit)
+
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        submitButton.setOnClickListener {
+            val lockPIN = inputEditText.text.toString().toInt()
+            Log.i(TAG, "received pin : $lockPIN")
+            unlockLockerFromApp(lockPIN)
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
     private fun launchSetPINDialog() {
         val dialog = Dialog(this)
-        dialog.setContentView(R.layout.pin_set_dialog)
+        dialog.setContentView(R.layout.ask_pin_dialog)
 
         val inputEditText = dialog.findViewById<EditText>(R.id.et_lock_pin)
         val cancelButton = dialog.findViewById<Button>(R.id.cancel)
@@ -141,6 +174,12 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(applicationContext, LoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun launchHistoryActivity() {
+        val intent = Intent(applicationContext, HistoryActivity::class.java)
+        intent.putExtra("ArduinoID", arduinoID)
+        startActivity(intent)
     }
 
 }

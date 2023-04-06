@@ -7,10 +7,10 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tv_set_lock_pin"
+        android:id="@+id/tv_lock_pin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/enter_new_pin"
+        android:text="@string/enter_pin"
         android:textColor="@color/black"
         android:textSize="22sp" />
 
