@@ -22,7 +22,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
 
     companion object {
-        const val TAG = "Login Activity"
+        private const val TAG = "Login Activity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

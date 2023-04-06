@@ -10,13 +10,17 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.smartsafe.R
 import com.google.firebase.FirebaseOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
-    private val TAG = "MyFirebaseMessagingService"
+    companion object
+    {
+        private const val TAG = "MyFirebaseMessagingService"
+    }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: ${remoteMessage.from}")
@@ -24,19 +28,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         remoteMessage.notification?.let {
             Log.d(TAG, "Notification Body: ${it.body}")
 
-            // Notification channel is required for Android Oreo and above
-            // Create the NotificationChannel.
-            val name = getString(R.string.alerts_notification_channel_name)
-            val id = getString(R.string.alerts_notification_channel_id)
-            val descriptionText = getString(R.string.alerts_channel_description)
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val mChannel = NotificationChannel(id, name, importance)
-            mChannel.description = descriptionText
-            // Register the channel with the system. You can't change the importance
-            // or other notification behaviors after this.
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
 
+            val id = getString(R.string.alerts_notification_channel_id)
             val soundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
             val notificationBuilder = NotificationCompat.Builder(this, id)
@@ -52,9 +46,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
-        // TODO: Send the new token to esp8266 for processing, or save it to firebase
 
-        FirebaseDatabase.getInstance().reference.child("child")
+        val sharedPref = applicationContext.getSharedPreferences(
+            getString(R.string.preference_file_key), Context.MODE_PRIVATE)
 
+        val editor = sharedPref.edit()
+        editor.putString(getString(R.string.app_token_key), token)
+        editor.apply()
+
+        val arduinoId = sharedPref.getString(getString(R.string.arduino_id_key), null)
+        if (arduinoId != null)
+        {
+            FirebaseDatabase.getInstance().reference.child("arduinoID").child(arduinoId).setValue(token)
+        }
     }
+
 }

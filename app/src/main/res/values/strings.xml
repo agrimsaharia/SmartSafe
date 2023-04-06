@@ -17,4 +17,10 @@
     <string name="register_text">Register an account</string>
     <string name="register_button_text">Register</string>
     <string name="logout">Logout</string>
+    <string name="preference_file_key">ProjectKeys</string>
+    <string name="arduino_id_key">Arduino_ID</string>
+    <string name="app_token_key">App_Token</string>
+    <string name="set_reset_pin">Set/Reset PIN</string>
+    <string name="enter_new_pin">Enter New PIN</string>
+    <string name="enter_arduino_ID">Enter Arduino ID to link</string>
 </resources>

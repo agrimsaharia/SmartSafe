@@ -23,23 +23,33 @@
 
     <EditText
         android:id="@+id/email_edit_text"
-        android:hint="@string/email_hint"
-        android:inputType="textEmailAddress"
-        android:layout_marginTop="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="48dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginRight="32dp"
+        android:hint="@string/email_hint"
+        android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/password_edit_text"
-        android:hint="@string/password_hint"
-        android:inputType="textPassword"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="48dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="32dp"
+        android:hint="@string/password_hint"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/etArduinoID"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="32dp"
+        android:hint="@string/enter_arduino_ID"
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/register_button"
