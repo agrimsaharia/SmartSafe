@@ -93,10 +93,10 @@ class MainActivity : AppCompatActivity() {
                 launchHistoryActivity()
             }
             R.id.set_pin -> {
-                launchSetPINDialog()
+                launchAskPINDialog(::setLockPIN, "Enter New PIN")
             }
             R.id.unlock_locker -> {
-                launchUnlockPINDialog()
+                launchAskPINDialog(::unlockLockerFromApp)
             }
             R.id.logout -> {
                 mAuth.signOut()
@@ -108,8 +108,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun unlockLockerFromApp(lockPIN: Int) {
         // TODO : Yet to finalise the process of unlocking mechanism
+        Toast.makeText(baseContext, "Locker Unlocked", Toast.LENGTH_SHORT).show()
     }
 
+    @Deprecated("use launchAskPINDialog instead")
     private fun launchUnlockPINDialog() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.ask_pin_dialog)
@@ -131,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    @Deprecated("use launchAskPINDialog instead")
     private fun launchSetPINDialog() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.ask_pin_dialog)
@@ -138,6 +141,9 @@ class MainActivity : AppCompatActivity() {
         val inputEditText = dialog.findViewById<EditText>(R.id.et_lock_pin)
         val cancelButton = dialog.findViewById<Button>(R.id.cancel)
         val submitButton = dialog.findViewById<Button>(R.id.submit)
+
+        val enterPinTextView = dialog.findViewById<TextView>(R.id.tv_lock_pin)
+        enterPinTextView.text = "Enter New PIN"
 
         cancelButton.setOnClickListener {
             dialog.dismiss()
@@ -147,7 +153,33 @@ class MainActivity : AppCompatActivity() {
             val lockPIN = inputEditText.text.toString().toInt()
             setLockPIN(lockPIN)
             Log.i(TAG, "received pin : $lockPIN")
-            Toast.makeText(baseContext, "PIN Successfully set", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    private fun launchAskPINDialog(onSubmitCallback : (Int)->Any, dialogText : String? = null) {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.ask_pin_dialog)
+
+        val inputEditText = dialog.findViewById<EditText>(R.id.et_lock_pin)
+        val cancelButton = dialog.findViewById<Button>(R.id.cancel)
+        val submitButton = dialog.findViewById<Button>(R.id.submit)
+
+        if (dialogText != null)
+        {
+            val enterPinTextView = dialog.findViewById<TextView>(R.id.tv_lock_pin)
+            enterPinTextView.text = dialogText
+        }
+
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        submitButton.setOnClickListener {
+            val lockPIN = inputEditText.text.toString().toInt()
+            onSubmitCallback(lockPIN)
+            Log.i(TAG, "received pin : $lockPIN")
             dialog.dismiss()
         }
         dialog.show()
@@ -155,8 +187,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setLockPIN(lockPIN: Int) {
         database.child("PIN").setValue(lockPIN)
+        Toast.makeText(baseContext, "PIN Successfully set", Toast.LENGTH_SHORT).show()
     }
-
 
     private fun createNotificationChannel() {
         val name = getString(R.string.alerts_notification_channel_name)
